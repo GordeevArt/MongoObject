@@ -18,12 +18,12 @@ trait MongoObject[T] {
   
   val collection: JSONCollection
   
-  def fetch[L](query: JsObject, projection: Option[JsObject] = None, sortQuery: Option[JsObject] = None)
-              (implicit reader : Reads[T]) = {
+  def fetch[L[_]](query: JsObject, projection: Option[JsObject] = None, sortQuery: Option[JsObject] = None)
+                 (implicit reader : Reads[T], cbf : scala.collection.generic.CanBuildFrom[L[_], T, L[T]])  = {
 
     val findQuery = projection.map(collection.find(query, _)).getOrElse(collection.find(query))
 
-    sortQuery.foldLeft(findQuery)(_ sort _).cursor[T](reader, defaultContext).collect[L]()
+    sortQuery.foldLeft(findQuery)(_ sort _).cursor[T](reader, defaultContext).collect[L]()(cbf, defaultContext)
   }
 
   def count(query: JsObject = Json.obj()): Future[Int] =
