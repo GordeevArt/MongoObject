@@ -10,7 +10,7 @@ Usage
 It's not in sbt or maven repository yet.
 
 Main mongoDB object 
-```
+```scala
 package system
 
 import play.api.Play.current
@@ -39,7 +39,7 @@ object Mongo {
 }
 ```
  Models
-```
+```scala
 package models
 
 import main.MongoObject
