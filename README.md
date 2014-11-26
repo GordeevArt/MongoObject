@@ -51,8 +51,8 @@ import system.Mongo
 // Simple case classes
 case class Person(_id: Option[BSONObjectID] = None, name: String, age: Int)
 
-case class Document(series: Option[String], number: String, issued: Option[String], documentType: Option[String],
-                    ownerId: Option[BSONObjectID])
+case class Document(series: Option[String], number: String, issued: Option[String], 
+                    documentType: Option[String], ownerId: Option[BSONObjectID])
 
 // Objects with queries
 object Person extends MongoObject[Person] {
@@ -61,7 +61,8 @@ object Person extends MongoObject[Person] {
 
   val collection = Mongo.persons
 
-  def findAdults = getList(Json.obj("age" -> Json.obj("$gte" -> 21)), sortQuery = Some(Json.obj("age" -> 1)))
+  def findAdults = 
+    fetch[List](Json.obj("age" -> Json.obj("$gte" -> 21)), sortQuery = Some(Json.obj("age" -> 1)))
 }
 
 
@@ -71,7 +72,8 @@ object Document extends MongoObject[Document] {
 
   val collection = Mongo.documents
 
-  def findPassportNumbers =
-    getList(Json.obj("documentType" -> "passport"), Some(Json.obj("_id" -> 0, "number" -> 1))).map(_.map(_.number))
+  def findPassportNumbers = 
+    fetch[List](Json.obj("documentType" -> "passport"), Some(Json.obj("_id" -> 0, "number" -> 1)))
+      .map(_.map(_.number))
 }
 ```
